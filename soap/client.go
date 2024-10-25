@@ -50,6 +50,8 @@ type Client struct {
 	Namespace              string               // SOAP Namespace
 	URNamespace            string               // Uniform Resource Namespace
 	ThisNamespace          string               // SOAP This-Namespace (tns)
+	TNSAttr                string               // SOAP This-Namespace (tns)
+	XSIAttr                string               // SOAP This-Namespace (xsi)
 	ExcludeActionNamespace bool                 // Include Namespace to SOAP Action header
 	Envelope               string               // Optional SOAP Envelope
 	Header                 Header               // Optional SOAP Header
@@ -102,8 +104,8 @@ func doRoundTrip(c *Client, setHeaders func(*http.Request), in, out Message) err
 		EnvelopeAttr: c.Envelope,
 		URNAttr:      c.URNamespace,
 		NSAttr:       c.Namespace,
-		TNSAttr:      c.ThisNamespace,
-		XSIAttr:      XSINamespace,
+		TNSAttr:      c.TNSAttr,
+		XSIAttr:      c.XSIAttr,
 		Header:       c.Header,
 		Body:         in,
 	}
@@ -114,9 +116,7 @@ func doRoundTrip(c *Client, setHeaders func(*http.Request), in, out Message) err
 	if req.NSAttr == "" {
 		req.NSAttr = c.URL
 	}
-	if req.TNSAttr == "" {
-		req.TNSAttr = req.NSAttr
-	}
+
 	var b bytes.Buffer
 	err := xml.NewEncoder(&b).Encode(req)
 	if err != nil {
